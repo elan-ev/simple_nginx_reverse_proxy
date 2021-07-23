@@ -15,7 +15,7 @@ Specifically, there are three templates that are copied by this role:
 * `nginx_http_config` becomes `/etc/nginx/conf.d/http.conf`
 * `nginx_tls_config` becomes `/etc/nginx/conf.d/tls.conf`
 
-The last two are included within the [default base config](templates/nginx.conf), before the http-block and within the server-block for https, respectively.
+The last two are included within the [default base config](templates/nginx.conf), withing the http-block (`http.conf`) and within the server-block for https (`tls.conf`).
 If you change the base config, you might need to include these again.
 If the variables remain empty (e.g. `nginx_tls_config: ''`), the files are not created on the remote.
 
