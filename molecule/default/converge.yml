@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: Include simple nginx reverse proxy
+      include_role:
+        name: elan.simple_nginx_reverse_proxy

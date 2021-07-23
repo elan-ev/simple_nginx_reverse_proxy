@@ -1,0 +1,21 @@
+---
+
+galaxy_info:
+  author: ELAN e.V.
+  role_name: simple_nginx_reverse_proxy
+  namespace: elan
+  description: Installs and prepares Nginx as reverse proxy
+  license: BSD-3-Clause
+  min_ansible_version: 2.9
+  platforms:
+    - name: EL
+      versions:
+        - 7
+        - 8
+    - name: Debian
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+dependencies: []

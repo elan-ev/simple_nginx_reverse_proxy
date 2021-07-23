@@ -1,0 +1,73 @@
+---
+
+- name: install nginx
+  package:
+    name: nginx
+    state: present
+
+- name: create configuration directories
+  file:
+    path: /etc/nginx/{{ item }}
+    state: directory
+    mode: '0755'
+    owner: root
+    group: root
+  loop:
+    - ssl
+    - conf.d
+    - conf.d/locations
+
+- name: configure nginx
+  template:
+    src: '{{ item.src }}'
+    dest: /etc/nginx/{{ item.dest }}
+    mode: '0644'
+    owner: root
+    group: root
+  notify: reload nginx
+  when: item.src is truthy
+  loop:
+    - src: '{{ nginx_base_config }}'
+      dest: nginx.conf
+    - src: '{{ nginx_tls_config }}'
+      dest: conf.d/tls.conf
+    - src: '{{ nginx_http_config }}'
+      dest: conf.d/http.conf
+
+- name: create root locations file
+  copy:
+    src: root.conf
+    dest: /etc/nginx/conf.d/locations/root.conf
+    owner: root
+    group: root
+    mode: '0644'
+    force: false
+  notify: reload nginx
+
+- name: Copy Diffie-Hellmann parameter (from https://ssl-config.mozilla.org/ffdhe2048.txt)
+  copy:
+    src: dhparam.pem
+    dest: /etc//nginx/ssl/dhparam.pem
+    owner: root
+    group: root
+    mode: '0640'
+  notify: reload nginx
+
+- name: install dummy tls certificate
+  copy:
+    src: dummy-tls-{{ item }}.pem
+    dest: /etc/nginx/ssl/{{ inventory_hostname }}.{{ item }}
+    owner: root
+    group: root
+    mode: '0400'
+    force: false
+  notify: reload nginx
+  loop:
+    - key
+    - crt
+
+- name: enable nginx
+  service:
+    name: nginx
+    enabled: true
+    state: started
