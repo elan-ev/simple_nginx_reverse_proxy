@@ -36,7 +36,7 @@ Your playbook might look like this:
   roles:
     - elan.simple_nginx_reverse_proxy
   vars:
-    - promtail_config_template: 'my_templates/promtail_config.yml.j2'
+    - nginx_tls_config: 'my_templates/nginx_tls_config.yml.j2'
 
 ```
 
