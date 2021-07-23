@@ -66,6 +66,21 @@
     - key
     - crt
 
+- name: SELinux settings
+  block:
+    - name: install dependencies
+      package:
+        name:
+          - python3-passlib
+          - python3-libselinux
+          - python3-libsemanage
+    - name: allow nginx to act as reverse proxy
+      seboolean:
+        name: httpd_can_network_connect
+        state: true
+        persistent: true
+  when: ansible_selinux is defined and ansible_selinux != false and ansible_selinux.status == 'enabled'  # noqa: line-too-long
+
 - name: enable nginx
   service:
     name: nginx
