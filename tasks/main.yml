@@ -71,7 +71,6 @@
     - name: install dependencies
       package:
         name:
-          - python3-passlib
           - python3-libselinux
           - python3-libsemanage
     - name: allow nginx to act as reverse proxy
