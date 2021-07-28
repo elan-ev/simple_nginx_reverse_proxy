@@ -5,4 +5,4 @@ FROM {{ item.image }}
 {% endif %}
 
 # Install dependencies
-RUN apt-get update && apt-get install -y python sudo bash ca-certificates iproute2 init && apt-get clean
+RUN apt-get update && apt-get install -y python sudo bash ca-certificates iproute2 init ufw && apt-get clean

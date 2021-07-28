@@ -7,6 +7,10 @@ It is basically a clone of https://github.com/elan-ev/opencast_nginx without the
 
 ## Role Variables
 
+For a full overview of configuration options look at the [defaults](defaults/main.yml).
+
+### Custom Config Files
+
 Instead of mapping a lot of variables from an ansible-config-file to a nginx-config-file,
 you can simply specify the paths to your own config-templates.
 Specifically, there are three templates that are copied by this role:
@@ -23,6 +27,12 @@ Additionally, the default base config includes all files `/etc/nginx/conf.d/loca
 This means that you can copy additional location configurations in seperate files there and they will be included in the base configuration.
 The role initially copies a `root.conf` file in the locations-folder, but it will not overwrite anything that already exists there.
 Also, if you copy a custom `root.conf` in place, it will not be overwritten by the role.
+
+### Security and Firewall Related
+
+This role can enable nginx for firewalld or ufw.
+However, you have to tell it so explicitely by either setting `` or `` to `true`.
+If SELinux is on the system and active, this role automatically enables nginx to act as a reverse proxy.
 
 ## Example Playbook
 
