@@ -44,9 +44,8 @@ Your playbook might look like this:
 - hosts: all
   become: true
   roles:
-    - elan.simple_nginx_reverse_proxy
-  vars:
-    - nginx_tls_config: 'my_templates/nginx_tls_config.yml.j2'
+    - role: elan.simple_nginx_reverse_proxy
+      nginx_tls_config: 'my_templates/nginx_tls_config.yml.j2'
 
 ```
 
