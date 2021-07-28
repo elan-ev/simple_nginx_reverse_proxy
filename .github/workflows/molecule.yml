@@ -25,3 +25,5 @@ jobs:
 
       - name: test playbook
         run: molecule test --driver-name docker
+        env:
+          PY_COLORS: '1'

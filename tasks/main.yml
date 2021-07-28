@@ -80,6 +80,23 @@
         persistent: true
   when: ansible_selinux is defined and ansible_selinux != false and ansible_selinux.status == 'enabled'  # noqa: line-too-long
 
+- name: configure for firewalld
+  firewalld:
+    service: '{{ item }}'
+    state: enabled
+    permanent: true
+    immediate: true
+  loop:
+    - http
+    - https
+  when: configure_for_firewalld
+
+- name: configure for ufw
+  ufw:
+    rule: allow
+    name: Nginx Full
+  when: configure_for_ufw
+
 - name: enable nginx
   service:
     name: nginx

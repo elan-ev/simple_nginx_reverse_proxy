@@ -3,3 +3,6 @@
 nginx_base_config: nginx.conf
 nginx_tls_config: conf.d/tls.conf
 nginx_http_config: conf.d/http.conf
+
+configure_for_firewalld: false
+configure_for_ufw: false
