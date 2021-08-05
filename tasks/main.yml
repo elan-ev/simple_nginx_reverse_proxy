@@ -44,7 +44,7 @@
     force: false
   notify: reload nginx
 
-- name: Copy Diffie-Hellmann parameter (from https://ssl-config.mozilla.org/ffdhe2048.txt)
+- name: Copy Diffie-Hellmann parameter
   copy:
     src: dhparam.pem
     dest: /etc//nginx/ssl/dhparam.pem
@@ -78,7 +78,7 @@
         name: httpd_can_network_connect
         state: true
         persistent: true
-  when: ansible_selinux is defined and ansible_selinux != false and ansible_selinux.status == 'enabled'  # noqa: line-too-long
+  when: ansible_selinux is defined and ansible_selinux != false and ansible_selinux.status == 'enabled'  # yamllint disable-line rule:line-length
 
 - name: configure for firewalld
   firewalld:

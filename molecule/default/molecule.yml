@@ -33,7 +33,9 @@ platforms:
       - /tmp
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
-lint: ansible-lint
+lint: |
+  ansible-lint
+  yamllint -c .yamllint .
 provisioner:
   name: ansible
   inventory:
