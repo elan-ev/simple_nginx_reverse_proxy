@@ -1,11 +1,15 @@
 ---
 
 - name: Converge for Centos
-  hosts: nginx_centos
+  hosts:
+    - nginx_centos_8
+    - nginx_centos_9
   pre_tasks:
     - name: install firewalld
       dnf:
-        name: firewalld
+        name:
+          - firewalld
+          - python3-firewall
     - name: enable firewalld
       service:
         name: firewalld

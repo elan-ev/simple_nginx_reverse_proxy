@@ -4,19 +4,18 @@ dependency:
 driver:
   name: podman
 platforms:
-  - name: nginx_centos
-    image: docker.io/pycontribs/centos:8
-    pre_build_image: true
+  - name: nginx_centos_8
+    image: quay.io/centos/centos:stream8
+    pre_build_image: false
     command: /sbin/init
     tmpfs:
       - /run
       - /tmp
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
-  - name: nginx_ubuntu
-    image: docker.io/pycontribs/ubuntu
+  - name: nginx_centos_9
+    image: quay.io/centos/centos:stream9
     pre_build_image: false
-    privileged: true
     command: /sbin/init
     tmpfs:
       - /run
@@ -24,9 +23,17 @@ platforms:
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
   - name: nginx_debian
-    image: docker.io/pycontribs/debian
+    image: docker.io/debian:stable
     pre_build_image: false
-    privileged: true
+    command: /sbin/init
+    tmpfs:
+      - /run
+      - /tmp
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+  - name: nginx_ubuntu
+    image: docker.io/ubuntu:20.04
+    pre_build_image: false
     command: /sbin/init
     tmpfs:
       - /run
@@ -40,7 +47,7 @@ provisioner:
   name: ansible
   inventory:
     host_vars:
-      centos:
-        ansible_user: ansible
-      ubuntu:
-        ansible_user: ansible
+      nginx_debian:
+        ansible_python_interpreter: /usr/bin/python3
+      nginx_centos_8:
+        ansible_python_interpreter: /usr/bin/python3
