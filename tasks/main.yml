@@ -1,12 +1,12 @@
 ---
 
-- name: install nginx
-  package:
+- name: Install nginx
+  ansible.builtin.package:
     name: nginx
     state: present
 
-- name: create configuration directories
-  file:
+- name: Create configuration directories
+  ansible.builtin.file:
     path: /etc/nginx/{{ item }}
     state: directory
     mode: '0755'
@@ -17,14 +17,14 @@
     - conf.d
     - conf.d/locations
 
-- name: configure nginx
-  template:
+- name: Configure nginx
+  ansible.builtin.template:
     src: '{{ item.src }}'
     dest: /etc/nginx/{{ item.dest }}
     mode: '0644'
     owner: root
     group: root
-  notify: reload nginx
+  notify: Reload nginx
   when: item.src is truthy
   loop:
     - src: '{{ nginx_base_config }}'
@@ -34,54 +34,55 @@
     - src: '{{ nginx_http_config }}'
       dest: conf.d/http.conf
 
-- name: create root locations file
-  copy:
+- name: Create root locations file
+  ansible.builtin.copy:
     src: root.conf
     dest: /etc/nginx/conf.d/locations/root.conf
     owner: root
     group: root
     mode: '0644'
     force: false
-  notify: reload nginx
+  notify: Reload nginx
 
 - name: Copy Diffie-Hellmann parameter
-  copy:
+  ansible.builtin.copy:
     src: dhparam.pem
     dest: /etc//nginx/ssl/dhparam.pem
     owner: root
     group: root
     mode: '0640'
-  notify: reload nginx
+  notify: Reload nginx
 
-- name: install dummy tls certificate
-  copy:
+- name: Install dummy tls certificate
+  ansible.builtin.copy:
     src: dummy-tls-{{ item }}.pem
     dest: /etc/nginx/ssl/{{ inventory_hostname }}.{{ item }}
     owner: root
     group: root
     mode: '0400'
     force: false
-  notify: reload nginx
+  notify: Reload nginx
   loop:
     - key
     - crt
 
 - name: SELinux settings
+  when: configure_for_selinux
   block:
-    - name: install dependencies
-      package:
+    - name: Install dependencies
+      ansible.builtin.package:
         name:
           - python3-libselinux
           - python3-libsemanage
-    - name: allow nginx to act as reverse proxy
-      seboolean:
+
+    - name: Allow nginx to act as reverse proxy
+      ansible.posix.seboolean:
         name: httpd_can_network_connect
         state: true
         persistent: true
-  when: ansible_selinux is defined and ansible_selinux != false and ansible_selinux.status == 'enabled'  # yamllint disable-line rule:line-length
 
-- name: configure for firewalld
-  firewalld:
+- name: Configure firewalld
+  ansible.posix.firewalld:
     service: '{{ item }}'
     state: enabled
     permanent: true
@@ -91,14 +92,14 @@
     - https
   when: configure_for_firewalld
 
-- name: configure for ufw
-  ufw:
+- name: Configure ufw
+  community.general.ufw:
     rule: allow
     name: Nginx Full
   when: configure_for_ufw
 
-- name: enable nginx
-  service:
+- name: Enable nginx
+  ansible.builtin.service:
     name: nginx
     enabled: true
     state: started
