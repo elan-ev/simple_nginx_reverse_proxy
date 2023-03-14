@@ -30,9 +30,13 @@ Also, if you copy a custom `root.conf` in place, it will not be overwritten by t
 
 ### Security and Firewall Related
 
-This role can enable nginx for firewalld or ufw.
-However, you have to tell it so explicitely by either setting `configure_for_firewalld` or `configure_for_ufw` to `true`.
-If SELinux is on the system and active, this role automatically enables nginx to act as a reverse proxy.
+This role can open ports for Nginx in firewalld or ufw.
+It can also set the SELinux boolean to allow Nginx to act as a reverse proxy.
+These settings are disabled by default and you have to explicitely enable them:
+
+- `configure_for_firewalld: true`
+- `configure_for_ufw: true`
+- `configure_for_selinux: true`
 
 ## Example Playbook
 

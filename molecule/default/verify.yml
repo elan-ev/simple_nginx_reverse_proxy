@@ -22,7 +22,7 @@
         content: 'location /test { return 204; }'
         dest: /etc/nginx/conf.d/locations/test.conf
 
-    - name: reload nginx
+    - name: Reload nginx
       service:
         name: nginx
         state: reloaded
