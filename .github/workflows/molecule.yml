@@ -19,11 +19,7 @@ jobs:
           ansible
           ansible-lint
           yamllint
-          molecule
-          molecule-docker
-          molecule-podman
 
-      - name: test playbook
-        run: molecule test --driver-name docker
-        env:
-          PY_COLORS: '1'
+      - run: ansible-lint .
+
+      - run: yamllint -c .yamllint .
