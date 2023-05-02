@@ -9,24 +9,19 @@ It is basically a clone of https://github.com/elan-ev/opencast_nginx without the
 
 For a full overview of configuration options look at the [defaults](defaults/main.yml).
 
-### Custom Config Files
+### Custom Configuration
 
-Instead of mapping a lot of variables from an ansible-config-file to a nginx-config-file,
-you can simply specify the paths to your own config-templates.
-Specifically, there are three templates that are copied by this role:
+You can set the `nginx_config` option to overwrite the default configuration.
+Set a list of `src` and `dest` fields specifying templates to deploy.
+The field `dest` always specifies a location relative to `/etc/nginx/`:
 
-* `nginx_base_config` becomes `/etc/nginx/nginx.conf`
-* `nginx_http_config` becomes `/etc/nginx/conf.d/http.conf`
-* `nginx_tls_config` becomes `/etc/nginx/conf.d/tls.conf`
-
-The last two are included within the [default base config](templates/nginx.conf), withing the http-block (`http.conf`) and within the server-block for https (`tls.conf`).
-If you change the base config, you might need to include these again.
-If the variables remain empty (e.g. `nginx_tls_config: ''`), the files are not created on the remote.
-
-Additionally, the default base config includes all files `/etc/nginx/conf.d/locations/*.conf` within the https server block.
-This means that you can copy additional location configurations in seperate files there and they will be included in the base configuration.
-The role initially copies a `root.conf` file in the locations-folder, but it will not overwrite anything that already exists there.
-Also, if you copy a custom `root.conf` in place, it will not be overwritten by the role.
+```
+roles:
+  - role: elan.simple_nginx_reverse_proxy
+    nginx_config:
+      - src: nginx.conf
+        dest: nginx.conf
+```
 
 ### Security and Firewall Related
 
@@ -49,7 +44,6 @@ Your playbook might look like this:
   become: true
   roles:
     - role: elan.simple_nginx_reverse_proxy
-      nginx_tls_config: 'my_templates/nginx_tls_config.yml.j2'
 
 ```
 

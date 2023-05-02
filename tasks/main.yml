@@ -7,15 +7,23 @@
 
 - name: Create configuration directories
   ansible.builtin.file:
-    path: /etc/nginx/{{ item }}
+    path: /etc/nginx/ssl/
     state: directory
     mode: '0755'
     owner: root
     group: root
+
+- name: Copy default configuration
+  ansible.builtin.copy:
+    src: '{{ item }}'
+    dest: /etc/nginx/ssl/{{ item }}
+    mode: '0755'
+    owner: root
+    group: root
   loop:
-    - ssl
-    - conf.d
-    - conf.d/locations
+    - tls.conf
+    - dhparam.pem
+  notify: Reload nginx
 
 - name: Configure nginx
   ansible.builtin.template:
@@ -24,36 +32,10 @@
     mode: '0644'
     owner: root
     group: root
-  notify: Reload nginx
-  when: item.src is truthy
-  loop:
-    - src: '{{ nginx_base_config }}'
-      dest: nginx.conf
-    - src: '{{ nginx_tls_config }}'
-      dest: conf.d/tls.conf
-    - src: '{{ nginx_http_config }}'
-      dest: conf.d/http.conf
-
-- name: Create root locations file
-  ansible.builtin.copy:
-    src: root.conf
-    dest: /etc/nginx/conf.d/locations/root.conf
-    owner: root
-    group: root
-    mode: '0644'
-    force: false
+  loop: '{{ nginx_config }}'
   notify: Reload nginx
 
-- name: Copy Diffie-Hellmann parameter
-  ansible.builtin.copy:
-    src: dhparam.pem
-    dest: /etc//nginx/ssl/dhparam.pem
-    owner: root
-    group: root
-    mode: '0640'
-  notify: Reload nginx
-
-- name: Install dummy tls certificate
+- name: Install dummy TLS certificate
   ansible.builtin.copy:
     src: dummy-tls-{{ item }}.pem
     dest: /etc/nginx/ssl/{{ inventory_hostname }}.{{ item }}
@@ -92,7 +74,7 @@
     - https
   when: configure_for_firewalld
 
-- name: Configure ufw
+- name: Configure UFW
   community.general.ufw:
     rule: allow
     name: Nginx Full
