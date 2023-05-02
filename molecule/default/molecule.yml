@@ -10,10 +10,6 @@ driver:
       ansible_connection: ssh
 platforms:
   - name: test
-lint: |
-  set -e
-  ansible-lint
-  yamllint -c .yamllint .
 provisioner:
   name: ansible
 verifier:
