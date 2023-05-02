@@ -1,25 +1,52 @@
 ---
-
-name: molecule
+name: Molecule
 
 on:  # yamllint disable-line rule:truthy
-  - push
-  - pull_request
+  push:
+  pull_request:
 
 jobs:
   lint:
     runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v2
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - dist: centos
+            release: 8-Stream
+          - dist: centos
+            release: 9-Stream
+          - dist: debian
+            release: buster
+          - dist: debian
+            release: bullseye
+          - dist: ubuntu
+            release: bionic
+          - dist: ubuntu
+            release: focal
+          - dist: ubuntu
+            release: jammy
 
+    steps:
+      - uses: actions/checkout@v3
+
+      # ansible-compat < 4 to mitigate
+      # https://github.com/ansible-community/molecule/issues/3903
       - name: install dependencies
         run: >
           pip3 install
           ansible
+          'ansible-compat < 4'
           ansible-lint
+          molecule
           yamllint
 
-      - run: ansible-lint .
+      - name: create lxc container
+        uses: lkiesow/setup-lxc-container@v1
+        with:
+          dist: ${{ matrix.os.dist }}
+          release: ${{ matrix.os.release }}
 
-      - run: yamllint -c .yamllint .
+      - name: run molecule tests
+        run: molecule test

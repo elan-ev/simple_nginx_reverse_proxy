@@ -1,23 +1,8 @@
 ---
 
-- name: Converge for Centos
-  hosts: nginx_centos
-  pre_tasks:
-    - name: install firewalld
-      dnf:
-        name: firewalld
-    - name: enable firewalld
-      service:
-        name: firewalld
-        enabled: true
-        state: started
-  roles:
-    - role: elan.simple_nginx_reverse_proxy
-      configure_for_firewalld: true
-
-- name: Converge for Ubuntu
-  hosts:
-    - nginx_ubuntu
-    - nginx_debian
-  roles:
-    - role: elan.simple_nginx_reverse_proxy
+- name: Converge
+  hosts: all
+  tasks:
+    - name: Include role
+      ansible.builtin.include_role:
+        name: simple_nginx_reverse_proxy
