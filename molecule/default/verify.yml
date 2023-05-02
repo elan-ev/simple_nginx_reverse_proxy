@@ -15,4 +15,4 @@
         url: https://127.0.0.1/
         validate_certs: false
         follow_redirects: none
-        status_code: 502
+        status_code: 200
