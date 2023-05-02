@@ -1,0 +1,24 @@
+---
+
+name: Ansible lint
+
+on:  # yamllint disable-line rule:truthy
+  push:
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: install dependencies
+        run: >
+          pip3 install
+          ansible-lint
+          yamllint
+
+      - run: ansible-lint
+
+      - run: yamllint -c .yamllint .

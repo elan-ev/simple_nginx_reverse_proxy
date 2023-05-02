@@ -2,45 +2,19 @@
 dependency:
   name: galaxy
 driver:
-  name: podman
+  name: delegated
+  options:
+    managed: false
+    login_cmd_template: ssh {instance}
+    ansible_connection_options:
+      ansible_connection: ssh
 platforms:
-  - name: nginx_centos
-    image: docker.io/pycontribs/centos:8
-    pre_build_image: true
-    command: /sbin/init
-    tmpfs:
-      - /run
-      - /tmp
-    volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
-  - name: nginx_ubuntu
-    image: docker.io/pycontribs/ubuntu
-    pre_build_image: false
-    privileged: true
-    command: /sbin/init
-    tmpfs:
-      - /run
-      - /tmp
-    volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
-  - name: nginx_debian
-    image: docker.io/pycontribs/debian
-    pre_build_image: false
-    privileged: true
-    command: /sbin/init
-    tmpfs:
-      - /run
-      - /tmp
-    volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+  - name: test
 lint: |
+  set -e
   ansible-lint
   yamllint -c .yamllint .
 provisioner:
   name: ansible
-  inventory:
-    host_vars:
-      centos:
-        ansible_user: ansible
-      ubuntu:
-        ansible_user: ansible
+verifier:
+  name: ansible
