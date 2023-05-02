@@ -31,14 +31,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-
+      # ansible-compat < 4 to mitigate
+      # https://github.com/ansible-community/molecule/issues/3903
       - name: install dependencies
         run: >
           pip3 install
           ansible
+          'ansible-compat < 4'
           ansible-lint
           molecule
           yamllint
