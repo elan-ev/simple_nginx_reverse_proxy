@@ -7,7 +7,7 @@
 
 - name: Create configuration directories
   ansible.builtin.file:
-    path: /etc/nginx/ssl/
+    path: /etc/nginx/tls/
     state: directory
     mode: '0755'
     owner: root
@@ -16,7 +16,7 @@
 - name: Copy default configuration
   ansible.builtin.copy:
     src: '{{ item }}'
-    dest: /etc/nginx/ssl/{{ item }}
+    dest: /etc/nginx/tls/{{ item }}
     mode: '0755'
     owner: root
     group: root
@@ -38,7 +38,7 @@
 - name: Install dummy TLS certificate
   ansible.builtin.copy:
     src: dummy-tls-{{ item }}.pem
-    dest: /etc/nginx/ssl/{{ inventory_hostname }}.{{ item }}
+    dest: /etc/nginx/tls/certificate.{{ item }}
     owner: root
     group: root
     mode: '0400'
