@@ -31,16 +31,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # ansible-compat < 4 to mitigate
-      # https://github.com/ansible-community/molecule/issues/3903
       - name: install dependencies
-        run: >
-          pip3 install
-          ansible
-          'ansible-compat < 4'
-          ansible-lint
-          molecule
-          yamllint
+        run: pip3 install -r .dev_requirements.txt
 
       - name: create lxc container
         uses: lkiesow/setup-lxc-container@v1
