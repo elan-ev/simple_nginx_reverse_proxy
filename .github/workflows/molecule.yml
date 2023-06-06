@@ -32,7 +32,10 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: install dependencies
-        run: pip3 install -r .dev_requirements.txt
+        run: >
+          pip3 install
+          ansible
+          molecule
 
       - name: create lxc container
         uses: lkiesow/setup-lxc-container@v1
