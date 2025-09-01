@@ -1,0 +1,51 @@
+---
+- name: Ensure prerequisites
+  ansible.builtin.apt:
+    name:
+      - curl
+      - gnupg2
+      - ca-certificates
+      - lsb-release
+      - debian-archive-keyring
+
+- name: Create directory for keyrings used by apt
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Install the nginx package repository key
+  ansible.builtin.get_url:
+    url: https://nginx.org/keys/nginx_signing.key
+    dest: /etc/apt/keyrings/nginx.asc
+    force: false
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Add nginx repository
+  ansible.builtin.apt_repository:
+    # yamllint disable-line rule:line-length
+    repo: "deb [signed-by=/etc/apt/keyrings/nginx.asc] http://nginx.org/packages/mainline/debian {{ ansible_distribution_release }} nginx"
+    filename: nginx
+
+- name: Add nginx repository pinning
+  ansible.builtin.copy:
+    dest: /etc/apt/preferences.d/99nginx
+    content: |
+      Package: *
+      Pin: origin nginx.org
+      Pin: release o=nginx
+      Pin-Priority: 900
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Install nginx
+  ansible.builtin.apt:
+    name:
+      - nginx
+      - nginx-module-acme
+    update_cache: true

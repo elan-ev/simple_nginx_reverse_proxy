@@ -1,9 +1,7 @@
 ---
 
-- name: Install nginx
-  ansible.builtin.package:
-    name: nginx
-    state: present
+- name: Include OS-specific install tasks
+  ansible.builtin.include_tasks: "install_{{ ansible_os_family | lower }}.yml"
 
 - name: Create configuration directories
   ansible.builtin.file:
@@ -34,19 +32,6 @@
     group: root
   loop: '{{ nginx_config }}'
   notify: Reload nginx
-
-- name: Install dummy TLS certificate
-  ansible.builtin.copy:
-    src: dummy-tls-{{ item }}.pem
-    dest: /etc/nginx/tls/certificate.{{ item }}
-    owner: root
-    group: root
-    mode: '0400'
-    force: false
-  notify: Reload nginx
-  loop:
-    - key
-    - crt
 
 - name: SELinux settings
   when: configure_for_selinux
