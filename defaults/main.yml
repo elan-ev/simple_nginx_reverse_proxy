@@ -8,6 +8,11 @@ configure_for_firewalld: false
 configure_for_ufw: false
 configure_for_selinux: false
 
+nginx_server_names: ["{{ inventory_hostname }}"]
+nginx_acme_issuer_uri: "https://acme-v02.api.letsencrypt.org/directory"
+# Specify a suitable DNS resolver
+nginx_resolver: 1.1.1.1
+
 nginx_proxy: |
   location / {
     proxy_set_header        Host $host;

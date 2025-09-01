@@ -24,14 +24,14 @@ nginx_proxy: |
   }
 ```
 
-### TLS Certificates
+### TLS Certificates with ACME
 
-The default configuration provides simple, self-signed certificates if none exist.
-Please make sure to replace them with your own certificates.
-Simply overwrite the following files:
+This role uses the [nginx-acme-module](https://github.com/nginx/nginx-acme) to automatically manage TLS-certificates.
 
-- `/etc/nginx/tls/certificate.key;`
-- `/etc/nginx/tls/certificate.crt;`
+You can modify the url to the acme issuer in `nginx_acme_issuer_uri`.
+If you need to provide multiple server names, you can list them in `nginx_server_names`.
+
+⚠️ You should check it the specified `nginx_resolver` is suitable for you.
 
 ### Advanced Configuration
 

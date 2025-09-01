@@ -1,0 +1,43 @@
+---
+
+- name: Ensure yum-utils are present
+  ansible.builtin.dnf:
+    name: yum-utils
+
+- name: Create nginx repository file
+  ansible.builtin.copy:
+    dest: /etc/yum.repos.d/nginx.repo
+    owner: root
+    group: root
+    mode: '0644'
+    content: |
+      [nginx-stable]
+      name=nginx stable repo
+      baseurl=http://nginx.org/packages/centos/$releasever/$basearch/
+      gpgcheck=1
+      enabled=1
+      gpgkey=https://nginx.org/keys/nginx_signing.key
+      module_hotfixes=true
+
+      [nginx-mainline]
+      name=nginx mainline repo
+      baseurl=http://nginx.org/packages/mainline/centos/$releasever/$basearch/
+      gpgcheck=1
+      enabled=1
+      gpgkey=https://nginx.org/keys/nginx_signing.key
+      module_hotfixes=true
+
+- name: Verify and import nginx GPG key
+  ansible.builtin.rpm_key:
+    key: https://nginx.org/keys/nginx_signing.key
+    fingerprint: 573B FD6B 3D8F BC64 1079 A6AB ABF5 BD82 7BD9 BF62
+
+- name: Enable nginx-mainline repo
+  community.general.dnf_config_manager:
+    name: nginx-mainline
+
+- name: Install nginx and its acme module
+  ansible.builtin.dnf:
+    name:
+      - nginx
+      - nginx-module-acme
